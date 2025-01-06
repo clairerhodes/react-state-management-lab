@@ -7,7 +7,9 @@ const App = () => {
 // create new state variable named team and money
 const [team, setTeam] = useState([]);
 const [money, setMoney] = useState(100);
-const [zombieFighter, setZombieFighter] = useState(
+const [totalAgility, setTotalAgility] = useState(0);
+const [totalStrength, setTotalStrength] = useState(0);
+const [zombieFighters, setZombieFighters] = useState(
   [
     {
       name: 'Survivor',
@@ -82,13 +84,81 @@ const [zombieFighter, setZombieFighter] = useState(
   ]
 );
 
+// add fighter to team
+const handleAddFighter = (newFighter) => {
+  if (money >= newFighter.price) {
+    newFighter.id = team.length;
+    setMoney(money - newFighter.price);
+    setTeam([...team, newFighter]);
+  } else {
+    console.log("Ya broke, get more money!");
+  }
+};
+
+// remove fighter from team
+const handleRemoveFighter = (index) => {
+  setMoney(money + team[index].price);
+  setTeam(team.filter((_, i) => i !== index));
+};
+
+// functions for total strength and agility
+const totalStr = (total, fighter) => {
+  return total + fighter.strength;
+};
+
+const totalAgi = (total, fighter) => {
+  return total + fighter.agility;
+};
+
+// total score
+const totalScore = (score) => {
+  if (score === "str") {
+    return team.reduce(totalStr, 0);
+  } else if (score === "agi") {
+    return team.reduce(totalAgi, 0);
+  }
+};
+
   return (
     <>
       <h1>Zombie Fighters</h1>
-      <p> </p> {/* display list fo zombie fighters by mapping the array using ul and li's */}
+      <h2>Money: {money}</h2>
+      <h2>Team Strength: {totalScore("str")}</h2>
+      <h2>Team Agility: {totalScore("agi")}</h2>
+      <h2>Team</h2>
+      <ul>
+        {team.length ? "" : <li>Pick your team!</li>}
+        {team.map((fighter, index) => (
+          <div className="fighterCard" key={index}>
+            <li>
+              <img src={fighter.img} alt={fighter.name} />
+            </li>
+            <li>{fighter.name}</li>
+            <li>Price: {fighter.price}</li>
+            <li>Strength: {fighter.strength}</li>
+            <li>Agility: {fighter.agility}</li>
+            <button onClick={() => handleRemoveFighter(index)}>Remove</button>
+          </div>
+        ))}
+      </ul>
+      <h2>Fighters</h2>
+        <ul>
+          {zombieFighters.map((fighter, index) => {
+            <div className="fighterCard" key={index}>
+              <li>
+                <img src={fighter.img} alt={fighter.name} />
+              </li>
+              <li>{fighter.name}</li>
+              <li>Price: {fighter.price}</li>
+              <li>Strength: {fighter.strength}</li>
+              <li>Agility: {fighter.agility}</li>
+              <button onClick={() => handleAddFighter(fighter)}>Add</button>
+            </div>
+          })}
+        </ul>
     </>
   );
-}
+};
 
-export default App
+export default App;
 
